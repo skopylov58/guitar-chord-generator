@@ -1,0 +1,19 @@
+{
+  "name": "@kopylov/giutar-chord-generator",
+  "version": "1.0.0",
+  "description": "Guitar chord generator",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "compile" : "tsc src/chords.ts src/svg.ts --target es6",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "guitar",
+    "chords"
+  ],
+  "author": "Sergey Kopylov",
+  "license": "ISC"
+}

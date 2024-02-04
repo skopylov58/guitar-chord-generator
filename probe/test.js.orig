@@ -1,0 +1,143 @@
+
+const C = 0;
+const D = 2;
+const E = 4;
+const F = 5;
+const G = 7;
+const A = 9;
+const B = 11;
+
+const MAJOR = [0, 4, 7]
+const SEVENTH = [0,4,7,10]
+const STANDARD_TUNING = [E, A, D, G, B, E].reverse()
+
+
+function displayChord(tuning, chord) {
+    let svg = document.getElementById("svg")
+    for (let i = 0; i < tuning.length; i++) {
+        let open = tuning[i]
+        for (let j = 0; j < 17; j++) {
+            let current = open + j;
+            if (inChord(current, chord) >= 0) {
+                svg.appendChild(press(i, j))
+            }
+        }
+    }
+}
+
+
+/**
+ * Check if given note is in the chord
+ * @param {note} note 
+ * @param {chord} chord aray of notes
+ * @returns index of found note, else returns -1
+ */
+function inChord(note, chord) {
+    for (let i = 0; i < chord.length; i++) {
+        if (note % 12 === chord[i] % 12) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+const cartesian = (...a) => a.reduce((a, b) => a.flatMap(d => b.map(e => [d, e].flat())));
+
+function findAllChords(chordRoot, chord, tuning) {
+    let res = []
+    chord = chord.map(n => n + chordRoot)
+    for (let i = 0; i < tuning.length; i++) {
+        let stringRoot = tuning[i]
+        let a = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+        let b = a.map(i => i + stringRoot)
+            .map(i => inChord(i, chord))
+            .map((n, i, a) => ({ pos: i, degree: n }))
+            .filter(e => e.degree >= 0)
+    
+        res.push(b)
+    }
+    return res
+}
+
+
+
+/*
+let res = []
+for (let i = 0; i < STANDARD_TUNING.length; i++) {
+    let root = STANDARD_TUNING[i]
+    let a = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+    let chord = SEVENTH.map(n => n + A)
+    let b = a.map(i => i + root)
+        .map(i => inChord(i, chord))
+        .map((n, i, a) => ({ pos: i, degree: n }))
+        .filter(e => e.degree >= 0)
+
+    res.push(b)
+}
+*/
+
+let allChords = findAllChords(A, SEVENTH, STANDARD_TUNING)
+console.log(allChords)
+
+console.log("Cartezian next")
+//let cartz = cartesian(res[0],res[1],res[2],res[3],res[4],res[5])
+let cartz = cartesian(...allChords)
+console.log(cartz)
+
+cartz = cartz.filter(f => flen(f) <= 2).filter(has4).filter(startsWithRoot)
+console.log(cartz)
+console.log(cartz.length)
+
+cartz.forEach(element => {
+    element.forEach(fing => {
+        console.log(disp(fing))
+    }
+    )
+    console.log("=============================")
+}
+)
+
+function startsWithRoot(fing) {
+    return fing[5].degree === 0 || fing[4].degree === 0
+
+
+}
+
+
+function has4 (fingArr) {
+    return fingArr.map(f => f.degree).filter(d => d===3).length != 0
+}
+
+function disp(fing) {
+    return "---|".repeat(fing.pos) + "-o-|" + "---|".repeat(17 - fing.pos) + " " + fing.degree
+}
+
+function flen(fing) {
+    //console.log("fing: " + JSON.stringify(fing))
+    let max = Math.max(...fing.map(i => i.pos))
+    let min = Math.min(...fing.map(i => i.pos).filter(i => i != 0))
+    //console.log("max min " + max + " " + min)
+    return max - min
+}
+
+/*
+let s = "0,4,7"
+let arr = s.split(",")
+arr = arr.map(i => Number(i))
+console.log(arr)
+
+//const fing = {pos:3, degree:0}
+//console.log(fing)
+
+const f = function(i) {
+  {pos:i, degree:6}
+}
+
+
+arr = arr.map(f)
+console.log(arr)
+*/
+
+
+
+

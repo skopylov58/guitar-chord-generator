@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<!--circle r="50"/-->
+<line x1="0" y1="0"   x2="800" y2="0"   stroke-width="2" stroke="black"/>
+<line x1="0" y1="20"  x2="800" y2="20"  stroke-width="2" stroke="black"/>
+<line x1="0" y1="40"  x2="800" y2="40"  stroke-width="2" stroke="black"/>
+<line x1="0" y1="60"  x2="800" y2="60"  stroke-width="2" stroke="black"/>
+
+<line x1="0"   y1="0" x2="0"  y2="60"  stroke-width="2" stroke="black" />
+<line x1="40"  y1="0" x2="40" y2="60"  stroke-width="2" stroke="black" />
+<line x1="80"  y1="0" x2="80" y2="60"  stroke-width="2" stroke="black" />
+<line x1="120" y1="0" x2="120" y2="60"  stroke-width="2" stroke="black" />
+
+  <circle cx="20" cy="20" r="5" fill="green" />
+  <circle cx="40" cy="60" r="5" />
+
+ <text x="20" y="80" fill="black">1</text>
+ <text x="60" y="80" fill="black">2</text>
+
+</svg>

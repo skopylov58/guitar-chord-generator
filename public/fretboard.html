@@ -1,0 +1,183 @@
+<html>
+
+<script>
+    const X0 = 40
+    const Y0 = 40
+    const DX = 50
+    const DY = 20
+    const STRING_LENGTH = 800
+    const NUMBER_OF_STRINGS = 6
+
+    const C = 0;
+    const D = 2;
+    const E = 4;
+    const F = 5;
+    const G = 7;
+    const A = 9;
+    const B = 11;
+
+    const MAJOR = [0, 4, 7]
+    const STANDARD_TUNING = [E,A,D,G,B,E].reverse()
+
+    const thick = [1, 1, 1, 2, 2, 3, 3]
+
+    function displayChord(tuning, chord) {
+        let svg = document.getElementById("svg")
+        for (let i = 0; i < tuning.length; i++) {
+            let open = tuning[i]
+            for (let j = 0; j < 17; j++) {
+                let current = open + j;
+                if (inChord(current, chord) >= 0) {
+                    svg.appendChild(press(i, j))
+                }
+            }
+        }
+    }
+
+    function hLine(x, y, len, width) {
+        let line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", x)
+        line.setAttribute("y1", y)
+        line.setAttribute("x2", x + len)
+        line.setAttribute("y2", y)
+        line.setAttribute("stroke", "black")
+        line.setAttribute("stroke-width", width)
+        return line
+    }
+
+    function vLine(x, y, len) {
+        let line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", x)
+        line.setAttribute("y1", y)
+        line.setAttribute("x2", x)
+        line.setAttribute("y2", y + len)
+        line.setAttribute("stroke", "black")
+        //line.setAttribute("stroke-width", width)
+        return line
+    }
+
+    function circle(x, y, r) {
+        let circ = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circ.setAttribute("cx", x)
+        circ.setAttribute("cy", y)
+        circ.setAttribute("r", r)
+        circ.setAttribute("stroke", "black")
+        circ.setAttribute("stroke-width", 1)
+        circ.setAttribute("fill", "white")
+        return circ
+    }
+
+    function drawString(stringNumber) {
+        return hLine(X0, Y0 + DY * stringNumber, STRING_LENGTH, thick[stringNumber])
+    }
+
+    function drawFret(fretNumber) {
+        return vLine(X0 + DX * fretNumber, Y0, DY * (NUMBER_OF_STRINGS - 1))
+    }
+
+    function press(stringNum, fretNum) {
+        if (fretNum === 0) {
+            return circle(X0 + DX * fretNum - DX/4, Y0 + DY * stringNum, 5)
+        } else {
+            return circle(X0 + DX * fretNum - DX/2, Y0 + DY * stringNum, 5)
+        }
+    }
+
+    function mytext(x, y, text) {
+        let text0 = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text0.setAttribute("x", x)
+        text0.setAttribute("y", y)
+        text0.setAttribute("fill", "black")
+        text0.textContent = text
+        return text0
+    }
+
+    function drawNeck() {
+        let svg = document.getElementById("svg")
+        while (svg.firstChild) {
+            svg.firstChild.remove()
+        }
+
+        for (let i = 0; i < 6; i++) {
+            svg.appendChild(drawString(i))
+        }
+        for (let i = 0; i < 17; i++) {
+            svg.appendChild(drawFret(i))
+        }
+        for (let i = 0; i < 17; i++) {
+            svg.appendChild(mytext(X0 + DX * i + DX / 2, Y0 + DY * 6, i + 1))
+        }
+    }
+
+    function showChord() {
+        let root = Number(document.getElementById("rootNote").value)
+        let chord = document.getElementById("chord").value.split(",").map(i => Number(i))
+        chord = chord.map(i => i + root)
+
+        drawNeck()
+        displayChord(STANDARD_TUNING, chord)
+    }
+
+/**
+ * Check if given note is in the chord
+ * @param {note} note 
+ * @param {chord} chord aray of notes
+ * @returns index of found note, else returns -1
+ */
+ function inChord(note, chord) {
+    for (let i = 0; i < chord.length; i++) {
+        if (note % 12 === chord[i] % 12) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+</script>
+<head>
+    <style>
+        .center {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 80%;
+        }
+    </style>
+
+</head>
+
+
+<title>Chord generator</title>
+
+<body>
+    <!--div id="boards"></div-->
+
+    <svg width="800" height="200" id="svg" xmlns="http://www.w3.org/2000/svg" class="center" />
+
+    <form action="">
+        <div class="center">
+        <select id="rootNote">
+            <option value="0">C</option>
+            <option value="2">D</option>
+            <option value="4">E</option>
+            <option value="5">F</option>
+            <option value="7">G</option>
+            <option value="9">A</option>
+            <option value="11">B</option>
+        </select>
+
+        <select id="chord">
+            <option value="0,4,7"></option>
+            <option value="0,4,7,10">7</option>
+            <option value="0,4,7,9">6</option>
+            <option value="0,3,7">min</option>
+            <option value="0,3,7,10">min7</option>
+            <option value="0,3,7,9">min6</option>
+        </select>
+
+        <button onclick="showChord(); return false;">Show</button>
+    </div>
+    </form>
+</body>
+
+</html>
