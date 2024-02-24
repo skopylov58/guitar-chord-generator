@@ -15,9 +15,10 @@ const F: Note = 5
 const G: Note = 7
 const A: Note = 9
 const B: Note = 11
+
 const NOTE_NAMES: string[] = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "A#m, Bb", "B",]
 
-const MAX_FRET = 12
+const MAX_FRET = 15
 const MAJOR: Chord = [0, 4, 7]
 const SIXTH: Chord = [0, 4, 7, 9]
 const SEVENTH: Chord = [0, 4, 7, 10]
@@ -27,6 +28,8 @@ const MINOR_SIXTH: Chord = [0, 3, 7, 9]
 const MINOR_SEVENTH: Chord = [0, 3, 7, 10]
 
 const STANDARD_GUITAR_TUNING: Tuning = [E, A, D, G, B, E].reverse()
+const OPEN_G_TUNING: Tuning = [D, G, D, G, B, D].reverse()
+const OPEN_G_MINOR_TUNING: Tuning = [D, G, D, G, 10, D].reverse()
 
 const EMPTY: string = "---|"
 const ROOT: string = "-0-|"
@@ -94,12 +97,14 @@ function len(fing: Fingering): number {
     return max - min + 1
 }
 
+
 function fingerings(chord: Chord, tuning: Tuning, fingeringLength: number): Fingering[] {
     let pos = tuning.map((_, i) => frets(i, chord, tuning))
     let fings = cartesianProduct(...pos)
     return fings
     .filter(f => len(f) <= fingeringLength)
     .filter(f => allDegrees(f, chord))
+    .filter(hasRootOnBassString)
     //.filter(f => f[4].position == 3)
     .sort(compFirstFret)
 }
@@ -137,7 +142,7 @@ function cmp(f1 : Fingering, f2 : Fingering) : number {
  * @returns true if fingering contains all degrees of given chord
  */
 function allDegrees(fing: Fingering, chord: Chord): boolean {
-    let uniq = [... new Set(fing.map(p => p.note))]
+    let uniq = [... new Set(fing.map(p => p.note % 12))]
     return uniq.length === chord.length
 }
 

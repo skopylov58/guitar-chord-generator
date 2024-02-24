@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -16,7 +16,21 @@
                 boards.removeChild(boards.firstChild);
             }
 
-            let f = fingerings(chord, STANDARD_GUITAR_TUNING, 3)
+            let tuningOpt = document.getElementById("tuning").value
+            let tuning = STANDARD_GUITAR_TUNING
+            if (tuningOpt == 'standard') {
+                tuning = STANDARD_GUITAR_TUNING
+            } else if (tuningOpt == 'openg') {
+                tuning = OPEN_G_TUNING
+            } else if (tuningOpt == 'opengminor') {
+                tuning = OPEN_G_MINOR_TUNING
+            } else {
+                console.warn('Unkown tuning ' + tuningOpt);
+            }
+
+            let length = document.getElementById("length").value
+
+            let f = fingerings(chord, tuning, length)
             f.forEach(fing => {
                 let svg = drawFingering(fing)
                 boards.appendChild(svg)
@@ -32,6 +46,7 @@
     
     <form action="">
         <div class="center">
+            <label for="rootNote">Chord</label>
             <select id="rootNote">
                 <option value="0">C</option>
                 <option value="2">D</option>
@@ -49,6 +64,19 @@
                 <option value="0,3,7">min</option>
                 <option value="0,3,7,10">min7</option>
                 <option value="0,3,7,9">min6</option>
+            </select>
+
+            <label for="tuning">Tuning</label>
+            <select name="" id="tuning">
+                <option value="standard">Standard</option>
+                <option value="openg">OpenG</option>
+                <option value="opengminor">OpenG minor</option>
+            </select>
+
+            <label for="length">Frets</label>
+            <select id="length">
+                <option value="3">3</option>
+                <option value="4">4</option>
             </select>
             
             <button onclick="showChord(); return false;">Show</button>
