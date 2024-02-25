@@ -1,5 +1,6 @@
 "use strict";
-/// <reference path="chords.ts" />
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.drawFingering = void 0;
 const SVG_NS = "http://www.w3.org/2000/svg"; //svg namespace
 const X0 = 40;
 const Y0 = 40;
@@ -67,6 +68,7 @@ function drawFingering(fing) {
     });
     return svg;
 }
+exports.drawFingering = drawFingering;
 function drawNeck(numOfStrings) {
     let svg = document.createElementNS(SVG_NS, "svg");
     svg.setAttribute("width", "800");

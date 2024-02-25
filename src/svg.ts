@@ -1,4 +1,4 @@
-/// <reference path="chords.ts" />
+import {Fingering} from "./chords"
 
 const SVG_NS = "http://www.w3.org/2000/svg" //svg namespace
 const X0 = 40
@@ -67,7 +67,7 @@ function mytext(x:number, y:number, text:string) : Element {
     return text0
 }
 
-function drawFingering(fing : Fingering) : Element {
+export function drawFingering(fing : Fingering) : Element {
     let svg = drawNeck(fing.length)
     fing.forEach( (fret, i) => {
         svg.appendChild(press(i, fret.position, degreeColours[fret.degree]))
