@@ -1,4 +1,4 @@
-import {Fingering, firstFret} from "./chords"
+import {Fingering, STANDARD_GUITAR_TUNING, firstFret, noteFromString, tuningFromString} from "./chords"
 
 function assert1(cond : boolean) : void {
     if (!cond) {
@@ -12,7 +12,15 @@ function assert2(cond : boolean, msg : string) : void {
     }
 }
 
-function test1() {
+function arraysAreEquals(a : number[], b : number[]) : boolean {
+    if (a.length != b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+        if (a[i] != b[i]) return false
+    }
+    return true;
+}
+
+function testFirstFret() {
     let arr = [0, 1, 0, 2, 3, 0]
     let min = Math.min(... arr.filter(i => i != 0))
     assert2 (min == 1, 'expecting min 1')
@@ -40,11 +48,27 @@ function test1() {
     ]
     first = firstFret(fing)
     assert1(first == 0)
-
 }
 
-test1()
+function testNoteFromString() : void {
+    const nc = noteFromString("C")
+    assert1(nc == 0)
 
+    const nd = noteFromString("D")
+    assert1(nd == 2)
+
+    // const cdies = noteFromString("C#")
+    // assert1(cdies == 1)
+}
+
+function testTuningFromSting() {
+    const tuning = tuningFromString("E A D G B E")
+    assert1(arraysAreEquals(tuning, STANDARD_GUITAR_TUNING))
+}
+
+testFirstFret();
+testNoteFromString()
+testTuningFromSting()
 
 
 

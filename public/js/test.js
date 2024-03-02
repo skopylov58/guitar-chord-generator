@@ -11,7 +11,16 @@ function assert2(cond, msg) {
         throw (msg);
     }
 }
-function test1() {
+function arraysAreEquals(a, b) {
+    if (a.length != b.length)
+        return false;
+    for (let i = 0; i < a.length; i++) {
+        if (a[i] != b[i])
+            return false;
+    }
+    return true;
+}
+function testFirstFret() {
     let arr = [0, 1, 0, 2, 3, 0];
     let min = Math.min(...arr.filter(i => i != 0));
     assert2(min == 1, 'expecting min 1');
@@ -38,4 +47,18 @@ function test1() {
     first = (0, chords_1.firstFret)(fing);
     assert1(first == 0);
 }
-test1();
+function testNoteFromString() {
+    const nc = (0, chords_1.noteFromString)("C");
+    assert1(nc == 0);
+    const nd = (0, chords_1.noteFromString)("D");
+    assert1(nd == 2);
+    // const cdies = noteFromString("C#")
+    // assert1(cdies == 1)
+}
+function testTuningFromSting() {
+    const tuning = (0, chords_1.tuningFromString)("E A D G B E");
+    assert1(arraysAreEquals(tuning, chords_1.STANDARD_GUITAR_TUNING));
+}
+testFirstFret();
+testNoteFromString();
+testTuningFromSting();

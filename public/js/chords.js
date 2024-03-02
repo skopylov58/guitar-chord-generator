@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.allDegrees = exports.hasRootOnBassString = exports.compFirstFret = exports.firstFret = exports.fingerings = exports.len = exports.frets = exports.note = exports.degree = exports.UKULELE_TUNING = exports.OPEN_G_MINOR_TUNING = exports.OPEN_G_TUNING = exports.STANDARD_GUITAR_TUNING = exports.MINOR_SEVENTH = exports.MINOR_SIXTH = exports.MINOR = exports.SEVENTH = exports.SIXTH = exports.MAJOR = exports.MAX_FRET = exports.NOTE_NAMES = exports.B = exports.A = exports.G = exports.F = exports.E = exports.D = exports.C = void 0;
+exports.noteFromString = exports.tuningFromString = exports.allDegrees = exports.hasRootOnBassString = exports.compareFirstFret = exports.firstFret = exports.fingerings0 = exports.fingerings = exports.len = exports.frets = exports.note = exports.degree = exports.UKULELE_TUNING = exports.OPEN_G_MINOR_TUNING = exports.OPEN_G_TUNING = exports.STANDARD_GUITAR_TUNING = exports.MINOR_SEVENTH = exports.MINOR_SIXTH = exports.MINOR = exports.SEVENTH = exports.SIXTH = exports.MAJOR = exports.MAX_FRET = exports.NOTE_NAMES = exports.B = exports.A = exports.G = exports.F = exports.E = exports.D = exports.C = void 0;
 exports.C = 0;
 exports.D = 2;
 exports.E = 4;
@@ -8,7 +8,7 @@ exports.F = 5;
 exports.G = 7;
 exports.A = 9;
 exports.B = 11;
-exports.NOTE_NAMES = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "A#m, Bb", "B",];
+exports.NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 exports.MAX_FRET = 15;
 exports.MAJOR = [0, 4, 7];
 exports.SIXTH = [0, 4, 7, 9];
@@ -72,9 +72,12 @@ exports.frets = frets;
  */
 function len(fing) {
     let total = fing.map(f => f.position).reduce((acc, val) => acc + val, 0);
+    if (total == 0) {
+        return 0;
+    }
     const max = Math.max(...fing.map(p => p.position));
     const min = Math.min(...fing.map(p => p.position).filter(p => p != 0));
-    return total == 0 ? 0 : max - min + 1;
+    return max - min + 1;
 }
 exports.len = len;
 function fingerings(chord, tuning, fingeringLength) {
@@ -84,38 +87,42 @@ function fingerings(chord, tuning, fingeringLength) {
         .filter(f => len(f) <= fingeringLength)
         .filter(f => allDegrees(f, chord))
         .filter(hasRootOnBassString)
-        .sort(compFirstFret);
+        .sort(compareFirstFret);
 }
 exports.fingerings = fingerings;
+function fingerings0(chord, tuning, fingeringLength) {
+    return fingerings(chord, tuningFromString(tuning), fingeringLength);
+}
+exports.fingerings0 = fingerings0;
 function firstFret(fing) {
     let total = fing.map(f => f.position).reduce((acc, val) => acc + val);
     let min = Math.min(...fing.map(p => p.position).filter(p => p != 0));
     return total == 0 ? 0 : min;
 }
 exports.firstFret = firstFret;
-function compFirstFret(fing1, fing2) {
+function compareFirstFret(fing1, fing2) {
     let f1 = firstFret(fing1);
     let f2 = firstFret(fing2);
     return f1 - f2;
 }
-exports.compFirstFret = compFirstFret;
+exports.compareFirstFret = compareFirstFret;
 function hasRootOnBassString(fing) {
     return fing.map(f => f).reverse().slice(0, 3).filter(f => f.degree == 0).length > 0;
 }
 exports.hasRootOnBassString = hasRootOnBassString;
-function cmp(f1, f2) {
+/*
+function cmp(f1: Fingering, f2: Fingering): number {
     let b1 = hasRootOnBassString(f1);
     let b2 = hasRootOnBassString(f2);
     if (b1 == b2) {
-        return 0;
-    }
-    else if (b1) {
-        return -1;
-    }
-    else {
-        return 1;
+        return 0
+    } else if (b1) {
+        return -1
+    } else {
+        return 1
     }
 }
+*/
 /**
  * Checks if fingering has all degrees of a given chord
  * @param fing
@@ -123,7 +130,35 @@ function cmp(f1, f2) {
  * @returns true if fingering contains all degrees of given chord
  */
 function allDegrees(fing, chord) {
-    let uniq = [...new Set(fing.map(p => p.note % 12))];
-    return uniq.length === chord.length;
+    let degrees = fing.map(f => f.degree);
+    if (chord.length > 3) {
+        degrees = degrees.filter(d => d != 2); //skip musical 5-th degree
+    }
+    let uniq = [...new Set(degrees)];
+    return uniq.length === 3;
 }
 exports.allDegrees = allDegrees;
+function tuningFromString(str) {
+    return str.split(" ").map(noteFromString).reverse();
+}
+exports.tuningFromString = tuningFromString;
+function noteFromString(note) {
+    for (let i = 0; i < exports.NOTE_NAMES.length; i++) {
+        if (note == exports.NOTE_NAMES[i]) {
+            return i;
+        }
+    }
+    throw ("Unknown note " + note);
+}
+exports.noteFromString = noteFromString;
+/*
+Гитара: E A D G B E
+Бас-гитара: E A D G
+Укулеле: G C E A
+Банджо: G D G B D
+Мандолина: G G D D A A E E
+Скрипка: G D A E
+Альт: C G D A
+Виолончель: C G D A
+Контрабас: E A D G
+*/ 

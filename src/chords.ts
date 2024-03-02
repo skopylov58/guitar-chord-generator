@@ -16,7 +16,7 @@ export const G: Note = 7
 export const A: Note = 9
 export const B: Note = 11
 
-export const NOTE_NAMES: string[] = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "A#m, Bb", "B",]
+export const NOTE_NAMES: string[] = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 
 export const MAX_FRET = 15
 export const MAJOR: Chord = [0, 4, 7]
@@ -89,9 +89,12 @@ export function frets(stringNum: number, chord: Chord, tuning: Tuning): Fret[] {
  */
 export function len(fing: Fingering): number {
     let total = fing.map(f => f.position).reduce((acc, val) => acc + val, 0);
+    if (total == 0) {
+        return 0;
+    }
     const max = Math.max(...fing.map(p => p.position))
     const min = Math.min(...fing.map(p => p.position).filter(p => p != 0))
-    return total == 0 ? 0 : max - min + 1
+    return max - min + 1
 }
 
 export function fingerings(chord: Chord, tuning: Tuning, fingeringLength: number): Fingering[] {
@@ -101,7 +104,11 @@ export function fingerings(chord: Chord, tuning: Tuning, fingeringLength: number
         .filter(f => len(f) <= fingeringLength)
         .filter(f => allDegrees(f, chord))
         .filter(hasRootOnBassString)
-        .sort(compFirstFret)
+        .sort(compareFirstFret)
+}
+
+export function fingerings0(chord: Chord, tuning: string, fingeringLength: number): Fingering[] {
+    return fingerings(chord, tuningFromString(tuning), fingeringLength)
 }
 
 export function firstFret(fing: Fingering): number {
@@ -110,7 +117,7 @@ export function firstFret(fing: Fingering): number {
     return total == 0 ? 0 : min
 }
 
-export function compFirstFret(fing1: Fingering, fing2: Fingering): number {
+export function compareFirstFret(fing1: Fingering, fing2: Fingering): number {
     let f1 = firstFret(fing1)
     let f2 = firstFret(fing2)
     return f1 - f2
@@ -120,6 +127,7 @@ export function hasRootOnBassString(fing: Fingering): boolean {
     return fing.map(f => f).reverse().slice(0, 3).filter(f => f.degree == 0).length > 0
 }
 
+/*
 function cmp(f1: Fingering, f2: Fingering): number {
     let b1 = hasRootOnBassString(f1);
     let b2 = hasRootOnBassString(f2);
@@ -131,6 +139,7 @@ function cmp(f1: Fingering, f2: Fingering): number {
         return 1
     }
 }
+*/
 
 /**
  * Checks if fingering has all degrees of a given chord
@@ -139,7 +148,36 @@ function cmp(f1: Fingering, f2: Fingering): number {
  * @returns true if fingering contains all degrees of given chord
  */
 export function allDegrees(fing: Fingering, chord: Chord): boolean {
-    let uniq = [... new Set(fing.map(p => p.note % 12))]
-    return uniq.length === chord.length
+    let degrees = fing.map(f => f.degree)
+    if (chord.length > 3) {
+        degrees = degrees.filter(d => d != 2)  //skip musical 5-th degree
+    }
+    let uniq = [... new Set(degrees)]
+    return uniq.length === 3
 }
 
+export function tuningFromString(str : string) : Tuning {
+    return str.split(" ").map(noteFromString).reverse();
+}
+
+export function noteFromString(note : string) : Note {
+    for (let i = 0; i < NOTE_NAMES.length; i++) {
+        if (note == NOTE_NAMES[i]) {
+            return i
+        }
+    }
+    throw ("Unknown note " + note)
+}
+
+
+/*
+Гитара: E A D G B E
+Бас-гитара: E A D G
+Укулеле: G C E A
+Банджо: G D G B D
+Мандолина: G G D D A A E E
+Скрипка: G D A E
+Альт: C G D A
+Виолончель: C G D A
+Контрабас: E A D G
+*/

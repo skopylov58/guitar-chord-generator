@@ -19,22 +19,9 @@
             }
 
             let tuningOpt = document.getElementById("tuning").value
-            let tuning = exports.STANDARD_GUITAR_TUNING
-            if (tuningOpt == 'standard') {
-                tuning = exports.STANDARD_GUITAR_TUNING
-            } else if (tuningOpt == 'openg') {
-                tuning = exports.OPEN_G_TUNING
-            } else if (tuningOpt == 'opengminor') {
-                tuning = exports.OPEN_G_MINOR_TUNING
-            } else if (tuningOpt == 'ukulele') {
-                tuning = exports.UKULELE_TUNING
-            } else {
-                console.warn('Unkown tuning ' + tuningOpt);
-            }
-
             let length = document.getElementById("length").value
 
-            let f = exports.fingerings(chord, tuning, length)
+            let f = exports.fingerings0(chord, tuningOpt, length)
             f.forEach(fing => {
                 let svg = exports.drawFingering(fing)
                 boards.appendChild(svg)
@@ -71,17 +58,22 @@
                 <option value="0,3,7">min</option>
                 <option value="0,3,7,9">min6</option>
                 <option value="0,3,7,10">min7</option>
+                <option value="0,4,7,9">6</option>
                 <option value="0,4,7,10">7</option>
                 <option value="0,4,7,11">maj7</option>
-                <option value="0,4,7,9">6</option>
             </select>
 
             <label for="tuning">Tuning</label>
             <select name="" id="tuning">
-                <option value="standard">Standard</option>
-                <option value="openg">OpenG</option>
-                <option value="opengminor">OpenG minor</option>
-                <option value="ukulele">Ukulele</option>
+                <option value="E A D G B E">Standard (E A D G B E)</option>
+                <option value="D A D G B E">Standard drop D (D A D G B E)</option>
+                <option value="D G D G B D">OpenG (D G D G B D)</option>
+                <option value="D G D G A# D">OpenG minor (D, G, D, G, A#, D)</option>
+                <option value="G D G B D">Banjo (G D G B D)</option>
+                <option value="G C E A">Ukulele (G C E A)</option>
+                <option value="G D A E">Violin (G D A E)</option>
+                <option value="C G D A">Alto / Cello (C G D A)</option>
+                <option value="E A D G">Double bass(E A D G)</option>
             </select>
 
             <label for="length">Frets</label>
