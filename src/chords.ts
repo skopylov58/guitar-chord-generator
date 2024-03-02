@@ -88,11 +88,11 @@ export function frets(stringNum: number, chord: Chord, tuning: Tuning): Fret[] {
  * @returns fingering length
  */
 export function len(fing: Fingering): number {
+    let total = fing.map(f => f.position).reduce((acc, val) => acc + val, 0);
     const max = Math.max(...fing.map(p => p.position))
     const min = Math.min(...fing.map(p => p.position).filter(p => p != 0))
-    return max - min + 1
+    return total == 0 ? 0 : max - min + 1
 }
-
 
 export function fingerings(chord: Chord, tuning: Tuning, fingeringLength: number): Fingering[] {
     let pos = tuning.map((_, i) => frets(i, chord, tuning))
@@ -101,12 +101,13 @@ export function fingerings(chord: Chord, tuning: Tuning, fingeringLength: number
         .filter(f => len(f) <= fingeringLength)
         .filter(f => allDegrees(f, chord))
         .filter(hasRootOnBassString)
-        //.filter(f => f[4].position == 3)
         .sort(compFirstFret)
 }
 
 export function firstFret(fing: Fingering): number {
-    return Math.min(...fing.map(p => p.position).filter(p => p != 0))
+    let total = fing.map(f => f.position).reduce((acc, val) => acc + val);
+    let min = Math.min(...fing.map(p => p.position).filter(p => p != 0))
+    return total == 0 ? 0 : min
 }
 
 export function compFirstFret(fing1: Fingering, fing2: Fingering): number {
