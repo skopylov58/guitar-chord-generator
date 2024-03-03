@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.drawFingering = void 0;
+exports.drawFingering4 = void 0;
 const SVG_NS = "http://www.w3.org/2000/svg"; //svg namespace
 const X0 = 40;
 const Y0 = 40;
 const DX = 50;
 const DY = 20;
 const STRING_LENGTH = 800;
-const thick = [1, 1, 1, 2, 2, 3, 3, 4];
-const degreeColours = ["green", "blue", "indigo", "violet"];
+const STRING_THICK = [1, 1, 2, 2, 2, 3, 4, 4];
+const DEGREE_COLOURS = ["green", "blue", "indigo", "violet"];
 function hLine(x, y, len, width) {
     let line = document.createElementNS(SVG_NS, "line");
     line.setAttribute("x1", String(x));
@@ -39,8 +39,8 @@ function circle(x, y, r, colour) {
     circ.setAttribute("fill", colour);
     return circ;
 }
-function drawString(stringNumber) {
-    return hLine(X0, Y0 + DY * stringNumber, STRING_LENGTH, thick[stringNumber]);
+function drawString(stringNumber, numOfFrets) {
+    return hLine(X0, Y0 + DY * stringNumber, DX * numOfFrets, STRING_THICK[stringNumber]);
 }
 function drawFret(fretNumber, numberOfStrings) {
     return vLine(X0 + DX * fretNumber, Y0, DY * (numberOfStrings - 1));
@@ -53,7 +53,7 @@ function press(stringNum, fretNum, colour) {
         return circle(X0 + DX * fretNum - DX / 2, Y0 + DY * stringNum, 5, colour);
     }
 }
-function mytext(x, y, text) {
+function text(x, y, text) {
     let text0 = document.createElementNS(SVG_NS, "text");
     text0.setAttribute("y", String(y));
     text0.setAttribute("x", String(x));
@@ -61,26 +61,36 @@ function mytext(x, y, text) {
     text0.textContent = text;
     return text0;
 }
-function drawFingering(fing) {
-    let svg = drawNeck(fing.length);
+// export function drawFingering(fing : Fingering) : Element {
+//     let svg = drawNeck(fing.length, 15, 1)
+//     fing.forEach( (fret, i) => {
+//         svg.appendChild(press(i, fret.position, DEGREE_COLOURS[fret.degree]))
+//     })
+//     return svg
+// }
+function drawFingering4(fing, firstFret) {
+    let svg = drawNeck(fing.length, 4, firstFret);
     fing.forEach((fret, i) => {
-        svg.appendChild(press(i, fret.position, degreeColours[fret.degree]));
+        let pos = fret.position == 0 ? 0 : fret.position - firstFret + 1;
+        svg.appendChild(press(i, pos, DEGREE_COLOURS[fret.degree]));
     });
     return svg;
 }
-exports.drawFingering = drawFingering;
-function drawNeck(numOfStrings) {
+exports.drawFingering4 = drawFingering4;
+function drawNeck(numOfStrings, numOfFrets, firstFretNumber) {
     let svg = document.createElementNS(SVG_NS, "svg");
-    svg.setAttribute("width", "800");
-    svg.setAttribute("height", "200");
+    const width = X0 + DX * numOfFrets;
+    const height = Y0 + DY * numOfStrings;
+    svg.setAttribute("width", width.toString());
+    svg.setAttribute("height", height.toString());
     for (let i = 0; i < numOfStrings; i++) {
-        svg.appendChild(drawString(i));
+        svg.appendChild(drawString(i, numOfFrets));
     }
-    for (let i = 0; i < 17; i++) {
+    for (let i = 0; i < numOfFrets; i++) {
         svg.appendChild(drawFret(i, numOfStrings));
     }
-    for (let i = 0; i < 17; i++) {
-        svg.appendChild(mytext(X0 + DX * i + DX / 2, Y0 + DY * 6, String(i + 1)));
+    for (let i = 0; i < numOfFrets; i++) {
+        svg.appendChild(text(X0 + DX * i + DX / 2, Y0 + DY * numOfStrings, String(i + firstFretNumber)));
     }
     return svg;
 }

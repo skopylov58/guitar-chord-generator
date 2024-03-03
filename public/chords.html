@@ -1,39 +1,41 @@
 <!DOCTYPE html>
 <html>
-<h1>Guitar chord generator</h1>
-<head>
-    <script type="text/javascript">var exports = {};</script>
-    <script type="text/javascript" src="js/chords.js"></script>
-    <script type="text/javascript" src="js/svg.js"></script>
+    <head>
+        <script type="text/javascript">var exports = {};</script>
+        <script type="text/javascript" src="js/chords.js"></script>
+        <script type="text/javascript" src="js/svg.js"></script>
+        <!--script type="module" src="js/chords.js"></script>
+        <script type="module" src="js/svg.js"></script-->
+    
+        <script>
+            function showChord() {
+                let root = Number(document.getElementById("rootNote").value)
+                let chord = document.getElementById("chord").value.split(",").map(i => Number(i))
+                chord = chord.map(i => (i + root) % 12)
 
+                let boards = document.getElementById("boards")
+                while (boards.firstChild) {
+                    boards.removeChild(boards.firstChild);
+                }
 
-    <script>
-        function showChord() {
-            let root = Number(document.getElementById("rootNote").value)
-            let chord = document.getElementById("chord").value.split(",").map(i => Number(i))
-            chord = chord.map(i => (i + root) % 12)
+                let tuningOpt = document.getElementById("tuning").value
+                let length = document.getElementById("length").value
 
-            let boards = document.getElementById("boards")
-            while(boards.firstChild){
-                boards.removeChild(boards.firstChild);
+                let f = exports.fingerings0(chord, tuningOpt, length)
+                f.forEach(fing => {
+                    let first = exports.firstFret(fing)
+                    let svg = exports.drawFingering4(fing, first)
+                    boards.appendChild(svg)
+                });
             }
 
-            let tuningOpt = document.getElementById("tuning").value
-            let length = document.getElementById("length").value
-
-            let f = exports.fingerings0(chord, tuningOpt, length)
-            f.forEach(fing => {
-                let svg = exports.drawFingering(fing)
-                boards.appendChild(svg)
-            });
-        }
-
-    </script>
-</head>
+        </script>
+    </head>
 
 <title>Chord generator</title>
 
 <body>
+    <h1>Guitar chord generator</h1>
     
     <form action="">
         <div class="center">
@@ -86,6 +88,11 @@
         </div>
     </form>
     <div id="boards"></div>
+
+    <hr/>
+    <a href="mailto:skopylov@gmail.com">mail:to Sergey Kopylov</a>
+    <p>
+    <a href="https://github.com/skopylov58/guitar-chord-generator">Github project</a>
 </body>
 
 </html>
