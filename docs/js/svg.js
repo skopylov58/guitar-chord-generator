@@ -6,7 +6,6 @@ const X0 = 40;
 const Y0 = 40;
 const DX = 50;
 const DY = 20;
-const STRING_LENGTH = 800;
 const STRING_THICK = [1, 1, 2, 2, 2, 3, 4, 4];
 const DEGREE_COLOURS = ["green", "blue", "indigo", "violet"];
 function hLine(x, y, len, width) {
