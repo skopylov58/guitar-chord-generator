@@ -76,6 +76,9 @@ function text(x:number, y:number, text:string) : Element {
 
 export function drawFingering4(fing : Fingering) : Element {
     const first = firstFret(fing)
+    // if (firstFret > 1 && firstFret % 2 == 0) {
+    //     firstFret = firstFret -1
+    // }
     let svg = drawNeck(fing.length, 4, first)
     fing.forEach( (fret, i) => {
         let pos = fret.position == 0 ? 0 : fret.position - first + 1;
