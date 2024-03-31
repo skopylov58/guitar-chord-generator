@@ -88,8 +88,7 @@ export function frets(stringNum: number, chord: Chord, tuning: Tuning): Fret[] {
  * @returns fingering length
  */
 export function len(fing: Fingering): number {
-    let total = fing.map(f => f.position).reduce((acc, val) => acc + val, 0);
-    if (total == 0) {
+    if (isOpenChord(fing)) {
         return 0;
     }
     const max = Math.max(...fing.map(p => p.position))
@@ -111,10 +110,24 @@ export function fingerings0(chord: Chord, tuning: string, fingeringLength: numbe
     return fingerings(chord, tuningFromString(tuning), fingeringLength)
 }
 
+/**
+ * @param fing Checks if given fingering is open string chord, like G in open G tuning
+ * @returns true if chord is open string
+ */
+export function isOpenChord(fing : Fingering) : boolean {
+    return fing.map(f => f.position).every(i => i == 0)
+}
+
+/**
+ * Gives the first fret of fingering
+ * @param fing 
+ * @returns 
+ */
 export function firstFret(fing: Fingering): number {
-    let total = fing.map(f => f.position).reduce((acc, val) => acc + val);
-    let min = Math.min(...fing.map(p => p.position).filter(p => p != 0))
-    return total == 0 ? 0 : min
+    if (isOpenChord(fing)) {
+        return 0;
+    }
+    return  Math.min(...fing.map(p => p.position).filter(p => p != 0))
 }
 
 export function compareFirstFret(fing1: Fingering, fing2: Fingering): number {
@@ -127,33 +140,18 @@ export function hasRootOnBassString(fing: Fingering): boolean {
     return fing.map(f => f).reverse().slice(0, 3).filter(f => f.degree == 0).length > 0
 }
 
-/*
-function cmp(f1: Fingering, f2: Fingering): number {
-    let b1 = hasRootOnBassString(f1);
-    let b2 = hasRootOnBassString(f2);
-    if (b1 == b2) {
-        return 0
-    } else if (b1) {
-        return -1
-    } else {
-        return 1
-    }
-}
-*/
-
 /**
- * Checks if fingering has all degrees of a given chord
+ * Checks if fingering has all degrees of a given chord. 
+ * In seventh chord we can skip musical 5-th degree
  * @param fing 
  * @param chord 
  * @returns true if fingering contains all degrees of given chord
  */
 export function allDegrees(fing: Fingering, chord: Chord): boolean {
-    let degrees = fing.map(f => f.degree)
-    if (chord.length > 3) {
-        degrees = degrees.filter(d => d != 2)  //skip musical 5-th degree
-    }
-    let uniq = [... new Set(degrees)]
-    return uniq.length === 3
+    //Creating bit mask for all degrees
+    const mask = fing.map(f => f.degree)
+    .reduce((acc, i) => acc | (1 << i), 0)
+    return chord.length == 3 ? mask == 7 : (mask | 4) == 15
 }
 
 export function tuningFromString(str : string) : Tuning {
@@ -161,14 +159,12 @@ export function tuningFromString(str : string) : Tuning {
 }
 
 export function noteFromString(note : string) : Note {
-    for (let i = 0; i < NOTE_NAMES.length; i++) {
-        if (note == NOTE_NAMES[i]) {
-            return i
-        }
+    const i = NOTE_NAMES.indexOf(note)
+    if (i >= 0) {
+        return i
     }
     throw ("Unknown note " + note)
 }
-
 
 /*
 Гитара: E A D G B E

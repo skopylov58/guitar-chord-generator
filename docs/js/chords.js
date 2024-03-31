@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.noteFromString = exports.tuningFromString = exports.allDegrees = exports.hasRootOnBassString = exports.compareFirstFret = exports.firstFret = exports.fingerings0 = exports.fingerings = exports.len = exports.frets = exports.note = exports.degree = exports.UKULELE_TUNING = exports.OPEN_G_MINOR_TUNING = exports.OPEN_G_TUNING = exports.STANDARD_GUITAR_TUNING = exports.MINOR_SEVENTH = exports.MINOR_SIXTH = exports.MINOR = exports.SEVENTH = exports.SIXTH = exports.MAJOR = exports.MAX_FRET = exports.NOTE_NAMES = exports.B = exports.A = exports.G = exports.F = exports.E = exports.D = exports.C = void 0;
+exports.noteFromString = exports.tuningFromString = exports.allDegrees = exports.hasRootOnBassString = exports.compareFirstFret = exports.firstFret = exports.isOpenChord = exports.fingerings0 = exports.fingerings = exports.len = exports.frets = exports.note = exports.degree = exports.UKULELE_TUNING = exports.OPEN_G_MINOR_TUNING = exports.OPEN_G_TUNING = exports.STANDARD_GUITAR_TUNING = exports.MINOR_SEVENTH = exports.MINOR_SIXTH = exports.MINOR = exports.SEVENTH = exports.SIXTH = exports.MAJOR = exports.MAX_FRET = exports.NOTE_NAMES = exports.B = exports.A = exports.G = exports.F = exports.E = exports.D = exports.C = void 0;
 exports.C = 0;
 exports.D = 2;
 exports.E = 4;
@@ -71,8 +71,7 @@ exports.frets = frets;
  * @returns fingering length
  */
 function len(fing) {
-    let total = fing.map(f => f.position).reduce((acc, val) => acc + val, 0);
-    if (total == 0) {
+    if (isOpenChord(fing)) {
         return 0;
     }
     const max = Math.max(...fing.map(p => p.position));
@@ -94,10 +93,24 @@ function fingerings0(chord, tuning, fingeringLength) {
     return fingerings(chord, tuningFromString(tuning), fingeringLength);
 }
 exports.fingerings0 = fingerings0;
+/**
+ * @param fing Checks if given fingering is open string chord, like G in open G tuning
+ * @returns true if chord is open string
+ */
+function isOpenChord(fing) {
+    return fing.map(f => f.position).every(i => i == 0);
+}
+exports.isOpenChord = isOpenChord;
+/**
+ * Gives the first fret of fingering
+ * @param fing
+ * @returns
+ */
 function firstFret(fing) {
-    let total = fing.map(f => f.position).reduce((acc, val) => acc + val);
-    let min = Math.min(...fing.map(p => p.position).filter(p => p != 0));
-    return total == 0 ? 0 : min;
+    if (isOpenChord(fing)) {
+        return 0;
+    }
+    return Math.min(...fing.map(p => p.position).filter(p => p != 0));
 }
 exports.firstFret = firstFret;
 function compareFirstFret(fing1, fing2) {
@@ -110,32 +123,18 @@ function hasRootOnBassString(fing) {
     return fing.map(f => f).reverse().slice(0, 3).filter(f => f.degree == 0).length > 0;
 }
 exports.hasRootOnBassString = hasRootOnBassString;
-/*
-function cmp(f1: Fingering, f2: Fingering): number {
-    let b1 = hasRootOnBassString(f1);
-    let b2 = hasRootOnBassString(f2);
-    if (b1 == b2) {
-        return 0
-    } else if (b1) {
-        return -1
-    } else {
-        return 1
-    }
-}
-*/
 /**
- * Checks if fingering has all degrees of a given chord
+ * Checks if fingering has all degrees of a given chord.
+ * In seventh chord we can skip musical 5-th degree
  * @param fing
  * @param chord
  * @returns true if fingering contains all degrees of given chord
  */
 function allDegrees(fing, chord) {
-    let degrees = fing.map(f => f.degree);
-    if (chord.length > 3) {
-        degrees = degrees.filter(d => d != 2); //skip musical 5-th degree
-    }
-    let uniq = [...new Set(degrees)];
-    return uniq.length === 3;
+    //Creating bit mask for all degrees
+    const mask = fing.map(f => f.degree)
+        .reduce((acc, i) => acc | (1 << i), 0);
+    return chord.length == 3 ? mask == 7 : (mask | 4) == 15;
 }
 exports.allDegrees = allDegrees;
 function tuningFromString(str) {
@@ -143,10 +142,9 @@ function tuningFromString(str) {
 }
 exports.tuningFromString = tuningFromString;
 function noteFromString(note) {
-    for (let i = 0; i < exports.NOTE_NAMES.length; i++) {
-        if (note == exports.NOTE_NAMES[i]) {
-            return i;
-        }
+    const i = exports.NOTE_NAMES.indexOf(note);
+    if (i >= 0) {
+        return i;
     }
     throw ("Unknown note " + note);
 }
