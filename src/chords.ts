@@ -163,7 +163,7 @@ export function noteFromString(note : string) : Note {
     if (i >= 0) {
         return i
     }
-    throw ("Unknown note " + note)
+    throw (`Unknown note ${note}`)
 }
 
 /*

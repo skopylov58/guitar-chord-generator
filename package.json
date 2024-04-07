@@ -7,13 +7,26 @@
     "lib": "lib"
   },
   "scripts": {
-    "compile" : "tsc src/chords.ts src/svg.ts --target es6",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "develop": "webpack-dev-server --mode development",
+    "build": "webpack --mode production",
+    "test": "jest"
   },
   "keywords": [
     "guitar",
     "chords"
   ],
   "author": "Sergey Kopylov",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/preset-env": "^7.24.4",
+    "@babel/preset-typescript": "^7.24.1",
+    "@types/jest": "^29.5.12",
+    "html-webpack-plugin": "^5.6.0",
+    "jest": "^29.7.0",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.4.4",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.4"
+  }
 }

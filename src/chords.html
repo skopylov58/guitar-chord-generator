@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+
+<title>Chord generator</title>
+
+<body>
+    <h1>Guitar chord generator</h1>
+    
+    <form action="">
+        <div class="center">
+            <label for="rootNote">Chord</label>
+            <select id="rootNote">
+                <option value="0">C</option>
+                <option value="1">C#</option>
+                <option value="2">D</option>
+                <option value="3">D#</option>
+                <option value="4">E</option>
+                <option value="5">F</option>
+                <option value="6">F#</option>
+                <option value="7">G</option>
+                <option value="8">G#</option>
+                <option value="9">A</option>
+                <option value="10">A#</option>
+                <option value="11">B</option>
+            </select>
+            
+            <select id="chord">
+                <option value="0,4,7"></option>
+                <option value="0,3,7">min</option>
+                <option value="0,3,7,9">min6</option>
+                <option value="0,3,7,10">min7</option>
+                <option value="0,4,7,9">6</option>
+                <option value="0,4,7,10">7</option>
+                <option value="0,4,7,11">maj7</option>
+            </select>
+
+            <label for="tuning">Tuning</label>
+            <select name="" id="tuning">
+                <option value="E A D G B E">Standard (E A D G B E)</option>
+                <option value="D A D G B E">Standard drop D (D A D G B E)</option>
+                <option value="D G D G B D">OpenG (D G D G B D)</option>
+                <option value="D G D G A# D">OpenG minor (D, G, D, G, A#, D)</option>
+                <option value="G D G B D">Banjo (G D G B D)</option>
+                <option value="G C E A">Ukulele (G C E A)</option>
+                <option value="G D A E">Violin (G D A E)</option>
+                <option value="C G D A">Alto / Cello (C G D A)</option>
+                <option value="E A D G">Double bass(E A D G)</option>
+            </select>
+
+            <label for="length">Frets</label>
+            <select id="length">
+                <option value="3">3</option>
+                <option value="4">4</option>
+            </select>
+            
+            <button id= "search" >Show</button>
+        </div>
+    </form>
+    <div id="boards"></div>
+
+    <hr/>
+    <a href="mailto:skopylov@gmail.com">mail:to Sergey Kopylov</a>
+    <p>
+    <a href="https://github.com/skopylov58/guitar-chord-generator">Github project</a>
+</body>
+
+</html>
