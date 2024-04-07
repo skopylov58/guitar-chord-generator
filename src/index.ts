@@ -19,8 +19,7 @@ function showChord() {
 
     let f = fingerings0(chord, tuningOpt, Number(length))
     f.forEach(fing => {
-        let first = firstFret(fing)
-        let svg = drawFingering4(fing, first)
+        let svg = drawFingering4(fing)
         boards.appendChild(svg)
     });
     return false;
