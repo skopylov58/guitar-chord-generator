@@ -1,4 +1,4 @@
-import {Fingering, firstFret} from "./chords"
+import {Fingering, firstFret, len} from "./chords"
 
 const SVG_NS = "http://www.w3.org/2000/svg" //svg namespace
 const X0 = 40
@@ -75,10 +75,10 @@ function text(x:number, y:number, text:string) : Element {
 // }
 
 export function drawFingering4(fing : Fingering) : Element {
-    const first = firstFret(fing)
-    // if (firstFret > 1 && firstFret % 2 == 0) {
-    //     firstFret = firstFret -1
-    // }
+    let first = firstFret(fing)
+    if (first > 1 && first % 2 == 0 && len(fing) <=3) {
+        first = first -1
+    }
     let svg = drawNeck(fing.length, 4, first)
     fing.forEach( (fret, i) => {
         let pos = fret.position == 0 ? 0 : fret.position - first + 1;
