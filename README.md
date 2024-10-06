@@ -3,9 +3,9 @@
 
 Build
 ```
-tsc
+npm run build
 ```
 Test
 ```
-node --trace-uncaught public/js/test.js
+npm run test
 ```
