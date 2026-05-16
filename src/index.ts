@@ -1,3 +1,4 @@
+import "./styles.css"
 import { fingerings0, firstFret } from "./chords"
 import { drawFingering4 } from "./svg"
 

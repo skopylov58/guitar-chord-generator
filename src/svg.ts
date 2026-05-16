@@ -4,7 +4,7 @@ const SVG_NS = "http://www.w3.org/2000/svg" //svg namespace
 const X0 = 40
 const Y0 = 40
 const DX = 50
-const DY = 20
+const DY = 25
 const STRING_THICK = [1, 1, 2, 2, 2, 3, 4, 4]
 const DEGREE_COLOURS = ["green", "blue", "indigo", "violet"]
 
@@ -89,8 +89,8 @@ export function drawFingering4(fing : Fingering) : Element {
 
 function drawNeck(numOfStrings:number, numOfFrets : number, firstFretNumber : number) : Element {
     let svg = document.createElementNS(SVG_NS, "svg");
-    const width = X0 + DX * numOfFrets
-    const height = Y0 + DY * numOfStrings
+    const width = X0 + DX * numOfFrets + 20
+    const height = Y0 + DY * numOfStrings + 20
     svg.setAttribute("width", width.toString())
     svg.setAttribute("height", height.toString())
 
